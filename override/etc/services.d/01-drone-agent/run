@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-if [[ -e /mnt/config/etc/drone-server/config ]]; then
-  . /mnt/config/etc/drone-server/config
+if [[ -e /mnt/config/etc/drone/config ]]; then
+  . /mnt/config/etc/drone/config
 fi
 
 SSLPRIMARY=`echo $SSLDOMAINS | tr ',' ' ' | awk '{print $1}'`
