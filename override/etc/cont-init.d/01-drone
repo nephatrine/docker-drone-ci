@@ -12,6 +12,8 @@ if [[ ! -e /mnt/config/etc/drone/config ]]; then
     s6-setuidgid guardian mkdir -p /mnt/config/etc/drone
   fi
 
+  s6-setuidgid guardian touch /mnt/config/etc/drone/config
+
   if [[ -z "${DRONE_DATABASE_SECRET}" ]]; then
     echo "export DRONE_DATABASE_SECRET=$(libressl rand -hex 16)" >> /mnt/config/etc/drone/config
   fi
