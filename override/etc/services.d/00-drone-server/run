@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bash
+
+/etc/cont-init.d/01-drone-server
+
+if [[ -e /mnt/config/etc/drone-server/config ]]; then
+  . /mnt/config/etc/drone-server/config
+fi
+
+SSLPRIMARY=`echo $SSLDOMAINS | tr ',' ' ' | awk '{print $1}'`
+DOMAINNAME=${SSLPRIMARY:-"localhost"}
+
+export DRONE_AGENTS_ENABLED=${DRONE_AGENTS_ENABLED:-"true"}
+export DRONE_DATABASE_DRIVER=${DRONE_DATABASE_DRIVER:-"sqlite3"}
+export DRONE_DATABASE_DATASOURCE=${DRONE_DATABASE_DATASOURCE:-"/mnt/config/data/drone/db/drone.db"}
+export DRONE_RPC_SECRET=${DRONE_RPC_SECRET:-"$(libressl rand -hex 16)"}
+
+if [[ ! -z "${SSLPRIMARY}" ]]; then
+  export DRONE_SERVER_PROTO=${DRONE_SERVER_PROTO:-"https"}
+  export DRONE_TLS_CERT=${DRONE_TLS_CERT:-"/mnt/config/ssl/live/${DOMAINNAME}/fullchain.pem"}
+  export DRONE_TLS_KEY=${DRONE_TLS_KEY:-"/mnt/config/ssl/live/${DOMAINNAME}/privkey.pem"}
+else
+  export DRONE_SERVER_PROTO=${DRONE_SERVER_PROTO:-"http"}
+fi
+export DRONE_SERVER_HOST=${DRONE_SERVER_HOST:-"${DOMAINNAME}"}
+
+exec s6-setuidgid guardian /usr/bin/drone-server

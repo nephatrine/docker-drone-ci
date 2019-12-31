@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+if [[ -e /run/docker.sock ]]; then
+  DGID=`stat /run/docker.sock | tr -d '/' | grep Gid | awk '{print $(NF-1)}'`
+  if [[ ! -z "${DGID}" ]]; then
+    groupmod -o -g "$DGID" docker
+    usermod -a -G docker guardian
+  fi
+fi
