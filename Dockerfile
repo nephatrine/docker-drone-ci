@@ -24,6 +24,10 @@ RUN echo "====== INSTALL PACKAGES ======" \
  && go install -ldflags='-w -s' ./cmd/drone-agent \
  && mv /root/go/bin/drone-agent /usr/bin/ \
  && cd /usr/src \
+ && git clone https://github.com/drone/drone-cli && cd drone-cli \
+ && go install -ldflags='-w -s' ./... \
+ && mv /root/go/bin/drone-cli /usr/bin/ \
+ && cd /usr/src \
  && git clone https://github.com/drone-runners/drone-runner-exec && cd drone-runner-exec \
  && go build -o /usr/bin/drone-runner-exec \
  \
