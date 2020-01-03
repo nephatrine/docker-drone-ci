@@ -35,5 +35,5 @@ RUN echo "====== INSTALL PACKAGES ======" \
  && apk del --purge .build-drone \
  && cd /usr/src && rm -rf /root/go /tmp/* /usr/src/* /var/cache/apk/*
 
-EXPOSE 3000/tcp 8080/tcp
+EXPOSE 8080/tcp
 COPY override /
