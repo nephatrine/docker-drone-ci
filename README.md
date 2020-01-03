@@ -59,11 +59,18 @@ configuration files.
 - ``DRONE_RPC_SECRET``: Server-Agent Secret (**generated**)
 - ``DRONE_SERVER_HOST``: External Hostname (*localhost*)
 - ``DRONE_SERVER_PROTO``: External Protocol (*http*)
+- ``DRONE_USER_CREATE``: Initial Administative User (*""*)
 - ``PUID``: Mount Owner UID (*1000*)
 - ``PGID``: Mount Owner GID (*100*)
 - ``SSLDOMAINS``: Comma-Delimited Certbot Domains (*""*)
 - ``SSLEMAIL``: Certbot Email (*""*)
 - ``TZ``: System Timezone (*America/New_York*)
+
+The ``DRONE_USER_CREATE`` variable takes more than just a username. You should
+pass in a string formatted like this ``username:<username>,admin:true``. This
+can be done after initial login at any time to bootstrap the administrative
+user. You will need to be an administative user to perform some tasks via the
+drone cli, but it is not required for basic usage.
 
 ## Persistent Mounts
 
