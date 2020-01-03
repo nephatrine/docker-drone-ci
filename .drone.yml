@@ -24,7 +24,7 @@ steps:
   image: appleboy/drone-discord
   settings:
     avatar_url: https://files.nephatrine.net/Images/Buttons/Drone.png
-    message: "Automated build of **{{repo.name}}** has returned [{{build.status}}]({{build.link}})."
+    message: "Automated build of **{{repo.name}}:{{commit.branch}}** has returned [{{build.status}}]({{build.link}})."
     username: DroneCI
     webhook_id:
       from_secret: webhook-id
