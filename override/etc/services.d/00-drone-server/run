@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-/etc/cont-init.d/01-drone-server
+/etc/cont-init.d/01-drone
 
 if [[ -e /mnt/config/etc/drone/config ]]; then
   . /mnt/config/etc/drone/config
