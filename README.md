@@ -4,32 +4,34 @@
 
 # Drone CI/CD Server
 
-This docker image contains the Drone server - a self-service CI/CD platform -
-using a sqlite3 database.
+This docker image contains a Drone server to self-host your own continuous
+delivery platform.
 
-**THIS IS COMPILED IN ENTERPRISE-MODE WITH THE ``nolimit`` TAG. PLEASE READ AND
-UNDERSTAND THE [DRONE LICENSE](https://drone.io/enterprise/license/). TO USE
-THIS VERSION YOU MUST MEET CERTAIN REQUIREMENTS AS OUTLINED IN THE
-[FAQ](https://discourse.drone.io/t/licensing-and-subscription-faq/3839). IF YOU
-DO NOT MEET THE REQUIREMENTS TO USE THE ENTERPRISE VERSION WITHOUT LIMITS,
-PLEASE USE THE COMMUNITY VERSION OR LICENSE THE ENTERPRISE VERSION.**
+**PLEASE READ AND UNDERSTAND THE [DRONE LICENSE](https://drone.io/enterprise/license/).
+THIS IMAGE CONTAINS THE ENTERPRISE VERSION IS COMPILED WITH THE ``nolimit`` TAG
+AND USE REQUIRES YOU MEET CERTAIN REQUIREMENTS AS LAID OUT IN THE
+[LICENSING FAQ](https://discourse.drone.io/t/licensing-and-subscription-faq/3839).
+IF YOU DO NOT MEET THOSE REQUIREMENTS YOU MUST EITHER USE THE COMMUNITY VERSION
+INSTEAD OR PURCHASE A LICENSE.**
 
 - [Drone](https://drone.io/)
 - [SQLite](https://www.sqlite.org/)
 
-Both a drone server and agent are included so you can use this as a single
-container if desired, but you can still add more agents down the line. To
-disable the built-in agent, set an the ``DRONE_AGENT_DISABLED`` variable to
-any value.
+This container includes a server, agent, and exec runner. This is not a
+single-server configuration so you can easily add more agents and runners in
+separate containers as needed. You can pass variable ``DRONE_AGENT_DISABLED``
+to disable both the agent and exec runner. You can similarly pass
+``DRONE_EXEC_DISABLED`` to just disable the exec runner.
 
-This container image includes [Certbot](https://certbot.eff.org/) and can be
-configured to obtain SSL certificates, but it is suggested to instead put it
-behind an [NGINX](https://nginx.com/) reverse proxy and use SSL there instead.
+This container includes [Certbot](https://certbot.eff.org/) and can be
+configured to obtain and serve SSL certificates, but a better option would be
+using an [NGINX](https://nginx.com/) reverse proxy container and only utilizing
+SSL at that point.
 
 You can spin up a quick temporary test container like this:
 
 ~~~
-docker run -rm -ti nephatrine/drone-server:latest /bin/bash
+docker run --rm -p 8080:8080 -v /var/run/docker.sock:/run/docker.sock -it nephatrine/drone-ci:latest /bin/bash
 ~~~
 
 ## Docker Tags
@@ -40,8 +42,9 @@ docker run -rm -ti nephatrine/drone-server:latest /bin/bash
 ## Configuration Variables
 
 You can set these parameters using the syntax ``-e "VARNAME=VALUE"`` on your
-``docker run`` command. These are typically used during the container
-initialization scripts to perform initial setup.
+``docker run`` command. Some of these may only be used during initial
+configuration and further changes may need to be made in the generated
+configuration files.
 
 - ``DRONE_DATABASE_SECRET``: Database Secret (**generated**)
 - ``DRONE_GITEA_SERVER``: Gitea Server (*""*)
@@ -65,12 +68,15 @@ initialization scripts to perform initial setup.
 ## Persistent Mounts
 
 You can provide a persistent mountpoint using the ``-v /host/path:/container/path``
-syntax. These mountpoints are intended important configuration files, logs,
-and application state (e.g. databases) can be retained outside the container
-image and are not lost on image updates.
+syntax. These mountpoints are intended to house important configuration files,
+logs, and application state (e.g. databases) so they are not lost on image
+update.
 
-- ``/mnt/config``: Configuration & Logs. Do not share with multiple containers.
+- ``/mnt/config``: Persistent Data.
 - ``/run/docker.sock`: Docker Daemon Socket.
+
+Do not share ``/mnt/config`` volumes between multiple containers as they may
+interfere with the operation of one another.
 
 You can perform some basic configuration of the container using the files and
 directories listed below.
@@ -83,9 +89,6 @@ directories listed below.
 **[*] Changes to some configuration files may require service restart to take
 immediate effect.**
 
-Some configuration files are required for system operation and will be
-recreated with their default settings if deleted.
-
 ## Network Services
 
 This container runs network services that are intended to be exposed outside
@@ -93,4 +96,3 @@ the container. You can map these to host ports using the ``-p HOST:CONTAINER``
 or ``-p HOST:CONTAINER/PROTOCOL`` syntax.
 
 - ``8080/tcp``: Drone Server. This is the server interface.
-- ``3000/tcp``: Drone Agent. If enabled, this is the agent interface.
