@@ -1,7 +1,7 @@
 FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-ARG DRONE_VERSION=v1.6.3
+ARG DRONE_VERSION=v1.6.4
 
 RUN echo "====== INSTALL PACKAGES ======" \
  && apk add \
