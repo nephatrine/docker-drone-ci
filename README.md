@@ -39,7 +39,9 @@ docker run --rm -p 8080:8080 -v /var/run/docker.sock:/run/docker.sock -it nephat
 ## Docker Tags
 
 - **nephatrine/drone-server:testing**: Drone Development (*master*)
-- **nephatrine/drone-server:latest**: Drone v1.6.3 (*v1.6.3*)
+- **nephatrine/drone-server:latest**: Drone v1.6.4 (*v1.6.4*)
+- **nephatrine/drone-server:1.6.3**: Drone v1.6.3 (*v1.6.3*)
+- **nephatrine/drone-server:1.2.1**: Drone v1.2.1 (*v1.2.1*)
 
 ## Configuration Variables
 
