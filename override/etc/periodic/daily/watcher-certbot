@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [[ $(ls /mnt/config/ssl/live | wc -l) -gt 0 ]]; then
-  certbot renew -n --agree-tos --rsa-key-size 4096 --config-dir /mnt/config/ssl --logs-dir /mnt/config/log --max-log-backups 0 --work-dir /tmp/certbot
-fi
-
-exit 0

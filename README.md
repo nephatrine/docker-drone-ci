@@ -16,6 +16,9 @@ AND USE REQUIRES YOU MEET CERTAIN REQUIREMENTS AS LAID OUT IN THE
 IF YOU DO NOT MEET THOSE REQUIREMENTS YOU MUST EITHER USE THE COMMUNITY VERSION
 INSTEAD OR PURCHASE A LICENSE.**
 
+**YOU WILL NEED TO USE A SEPARATE REVERSE PROXY SERVER TO SECURE THIS SERVICE.
+FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
+
 - [Drone](https://drone.io/)
 - [SQLite](https://www.sqlite.org/)
 
@@ -24,11 +27,6 @@ single-server configuration so you can easily add more agents and runners in
 separate containers as needed. You can pass variable ``DRONE_AGENT_DISABLED``
 to disable both the agent and exec runner. You can similarly pass
 ``DRONE_EXEC_DISABLED`` to just disable the exec runner.
-
-This container includes [Certbot](https://certbot.eff.org/) and can be
-configured to obtain and serve SSL certificates, but a better option would be
-using an [NGINX](https://nginx.com/) reverse proxy container and only utilizing
-SSL at that point.
 
 You can spin up a quick temporary test container like this:
 
@@ -66,8 +64,6 @@ configuration files.
 - ``DRONE_USER_CREATE``: Initial Administative User (*""*)
 - ``PUID``: Mount Owner UID (*1000*)
 - ``PGID``: Mount Owner GID (*100*)
-- ``SSLDOMAINS``: Comma-Delimited Certbot Domains (*""*)
-- ``SSLEMAIL``: Certbot Email (*""*)
 - ``TZ``: System Timezone (*America/New_York*)
 
 The ``DRONE_USER_CREATE`` variable takes more than just a username. You should

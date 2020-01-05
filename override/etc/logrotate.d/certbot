@@ -1,4 +1,0 @@
-/mnt/config/log/letsencrypt.log {
-	missingok
-	notifempty
-}

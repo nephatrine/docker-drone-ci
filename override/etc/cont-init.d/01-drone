@@ -1,8 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-SSLPRIMARY=`echo $SSLDOMAINS | tr ',' ' ' | awk '{print $1}'`
-DOMAINNAME=${SSLPRIMARY:-"localhost"}
-
 if [[ ! -d /mnt/config/data/drone/db ]]; then
   s6-setuidgid guardian mkdir -p /mnt/config/data/drone/db
 fi
@@ -17,7 +14,6 @@ if [[ ! -e /mnt/config/etc/drone/config ]]; then
   if [[ -z "${DRONE_DATABASE_SECRET}" ]]; then
     echo "export DRONE_DATABASE_SECRET=$(libressl rand -hex 16)" >> /mnt/config/etc/drone/config
   fi
-
   if [[ -z "${DRONE_GITEA_SERVER}" && -z "${DRONE_GITHUB_SERVER}" && -z "${DRONE_GITLAB_SERVER}" ]]; then
     echo "#export DRONE_GITEA_SERVER=https://try.gitea.io" >> /mnt/config/etc/drone/config
     echo "#export DRONE_GITEA_CLIENT_ID=" >> /mnt/config/etc/drone/config
@@ -29,19 +25,16 @@ if [[ ! -e /mnt/config/etc/drone/config ]]; then
     echo "#export DRONE_GITLAB_CLIENT_ID=" >> /mnt/config/etc/drone/config
     echo "#export DRONE_GITLAB_CLIENT_SECRET=" >> /mnt/config/etc/drone/config
   fi
-
   if [[ -z "${DRONE_RPC_SECRET}" ]]; then
     echo "export DRONE_RPC_SECRET=$(libressl rand -hex 16)" >> /mnt/config/etc/drone/config
   fi
-
   if [[ -z "${DRONE_SERVER_PROTO}" ]]; then
-    if [[ ! -z "${SSLPRIMARY}" ]]; then
-      echo "export DRONE_SERVER_PROTO=https" >> /mnt/config/etc/drone/config
-    else
-      echo "export DRONE_SERVER_PROTO=http" >> /mnt/config/etc/drone/config
-    fi
+    echo "export DRONE_SERVER_PROTO=http" >> /mnt/config/etc/drone/config
   fi
   if [[ -z "${DRONE_SERVER_HOST}" ]]; then
-    echo "export DRONE_SERVER_HOST=${DOMAINNAME}" >> /mnt/config/etc/drone/config
+    echo "#export DRONE_SERVER_HOST=example.net" >> /mnt/config/etc/drone/config
+  fi
+  if [[ -z "${DRONE_USER_CREATE}" ]]; then
+    echo "#export DRONE_USER_CREATE=username:octocat,admin:true" >> /mnt/config/etc/drone/config
   fi
 fi
