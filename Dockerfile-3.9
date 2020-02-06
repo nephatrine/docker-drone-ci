@@ -1,0 +1,35 @@
+FROM nephatrine/alpine-s6:3.9
+LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
+
+RUN echo "====== INSTALL PACKAGES ======" \
+ && apk add \
+   docker \
+   git \
+   sqlite \
+ && rm -rf /var/cache/apk/*
+
+ARG DRONE_VERSION=v1.2.1
+ARG DRONE_CLI_VERSION=v1.1.1
+ENV DRONE_EXEC_DISABLED=true
+
+RUN echo "====== COMPILE DRONE ======" \
+ && apk add --virtual .build-drone build-base go \
+ && cd /usr/src \
+ && git clone https://github.com/drone/drone && cd drone \
+ && git fetch && git fetch --tags \
+ && git checkout "$DRONE_VERSION" \
+ && go install -tags nolimit ./cmd/drone-server \
+ && mv /root/go/bin/drone-server /usr/bin/ \
+ && go install ./cmd/drone-agent \
+ && mv /root/go/bin/drone-agent /usr/bin/ \
+ && mkdir -p /root/go/src/github.com/drone && cd /root/go/src/github.com/drone \
+ && git clone https://github.com/drone/drone-cli && cd drone-cli \
+ && git fetch && git fetch --tags \
+ && git checkout "$DRONE_CLI_VERSION" \
+ && go install ./... \
+ && mv /root/go/bin/drone /usr/bin/ \
+ && cd /usr/src && rm -rf /root/go /usr/src/* \
+ && apk del --purge .build-drone && rm -rf /var/cache/apk/*
+
+EXPOSE 8080/tcp
+COPY override /
