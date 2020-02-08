@@ -15,17 +15,13 @@ ENV DRONE_EXEC_DISABLED=true
 RUN echo "====== COMPILE DRONE ======" \
  && apk add --virtual .build-drone build-base go \
  && cd /usr/src \
- && git clone https://github.com/drone/drone && cd drone \
- && git fetch && git fetch --tags \
- && git checkout "$DRONE_VERSION" \
+ && git clone -b "$DRONE_VERSION" --single-branch https://github.com/drone/drone && cd drone \
  && go install -tags nolimit ./cmd/drone-server \
  && mv /root/go/bin/drone-server /usr/bin/ \
  && go install ./cmd/drone-agent \
  && mv /root/go/bin/drone-agent /usr/bin/ \
  && mkdir -p /root/go/src/github.com/drone && cd /root/go/src/github.com/drone \
- && git clone https://github.com/drone/drone-cli && cd drone-cli \
- && git fetch && git fetch --tags \
- && git checkout "$DRONE_CLI_VERSION" \
+ && git clone -b "$DRONE_CLI_VERSION" --single-branch https://github.com/drone/drone-cli && cd drone-cli \
  && go install ./... \
  && mv /root/go/bin/drone /usr/bin/ \
  && cd /usr/src && rm -rf /root/go /usr/src/* \
