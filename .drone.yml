@@ -8,20 +8,41 @@ platform:
   arch: amd64
 
 steps:
-- name: build-3.9
+- name: build-1.2
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.2.1 -f Dockerfile-3.9 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.2.1
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.2.1 nephatrine/drone-ci:1.2.1
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.2.1
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.2.1
-- name: build-3.10
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.2 -f Dockerfile-1.2 .
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.2
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.2 nephatrine/drone-ci:1.2
+  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.2
+  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.2
+- name: build-1.3
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.6.3 -f Dockerfile-3.10 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.6.3
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.6.3 nephatrine/drone-ci:1.6.3
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.6.3
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.6.3
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.3 -f Dockerfile-1.3 .
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.3
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.3 nephatrine/drone-ci:1.3
+  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.3
+  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.3
+- name: build-1.4
+  commands:
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.4 -f Dockerfile-1.4 .
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.4
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.4 nephatrine/drone-ci:1.4
+  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.4
+  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.4
+- name: build-1.5
+  commands:
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.5 -f Dockerfile-1.5 .
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.5
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.5 nephatrine/drone-ci:1.5
+  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.5
+  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.5
+- name: build-1.6
+  commands:
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.6 -f Dockerfile-1.6 .
+  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.6
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.6 nephatrine/drone-ci:1.6
+  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.6
+  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.6
 - name: build-latest
   commands:
   - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:latest .
