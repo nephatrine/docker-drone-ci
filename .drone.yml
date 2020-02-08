@@ -15,13 +15,6 @@ steps:
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.2 nephatrine/drone-ci:1.2
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.2
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.2
-- name: build-1.3
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.3 -f Dockerfile-1.3 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.3
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.3 nephatrine/drone-ci:1.3
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.3
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.3
 - name: build-1.4
   commands:
   - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.4 -f Dockerfile-1.4 .
