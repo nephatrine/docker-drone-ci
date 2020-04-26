@@ -24,7 +24,7 @@ steps:
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.6
 - name: build-1.7
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.7 -f .
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.7 .
   - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.7
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.7 nephatrine/drone-ci:1.7
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.7
