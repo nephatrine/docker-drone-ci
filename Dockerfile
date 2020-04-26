@@ -8,9 +8,9 @@ RUN echo "====== INSTALL PACKAGES ======" \
    sqlite \
  && rm -rf /var/cache/apk/*
 
-ARG DRONE_VERSION=v1.6.5
+ARG DRONE_VERSION=v1.7.0
 ARG DRONE_CLI_VERSION=v1.2.1
-ARG DRONE_EXEC_VERSION=v1.0.0-beta.8
+ARG DRONE_EXEC_VERSION=v1.0.0-beta.9
 
 RUN echo "====== COMPILE DRONE ======" \
  && apk add --virtual .build-drone build-base go \
