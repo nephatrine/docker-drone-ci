@@ -24,20 +24,18 @@ steps:
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.6
 - name: build-1.7
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.7 .
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.7 -f Dockerfile-1.7 .
   - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.7
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.7 nephatrine/drone-ci:1.7
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.7
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.7
 - name: build-latest
   commands:
-  - docker tag nephatrine/drone-ci:1.7 pdr.nephatrine.net/nephatrine/drone-ci:latest
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:latest -f Dockerfile .
   - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:latest
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:latest
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:latest
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:latest
-  depends_on:
-  - build-1.7
 
 ---
 kind: pipeline
@@ -51,9 +49,14 @@ steps:
     message: "Automated build of **{{repo.name}}:{{commit.branch}}** has returned [{{build.status}}]({{build.link}})."
     username: DroneCI
     webhook_id:
-      from_secret: webhook-id
+      from_secret: wh-infra-id
     webhook_token:
-      from_secret: webhook-token
+      from_secret: wh-infra-tok
 
 depends_on:
 - default
+
+trigger:
+  status:
+  - success
+  - failure
