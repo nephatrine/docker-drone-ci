@@ -8,13 +8,6 @@ platform:
   arch: amd64
 
 steps:
-- name: build-1.2
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.2 -f Dockerfile-1.2 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.2
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.2 nephatrine/drone-ci:1.2
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.2
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.2
 - name: build-1.6
   commands:
   - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.6 -f Dockerfile-1.6 .
@@ -63,6 +56,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 1c3c90ff38206377a34667f15a36085864214e4df349c41cf67a7730d2665556
+hmac: 90f8cc82ea3b89330dd9777519a0dde36a48abfc82531ec17c60d208e9f8a40e
 
 ...
