@@ -8,7 +8,7 @@ RUN echo "====== INSTALL PACKAGES ======" \
    sqlite \
  && rm -rf /var/cache/apk/*
 
-ARG DRONE_VERSION=v1.8.0
+ARG DRONE_VERSION=v1.8.1
 ARG DRONE_CLI_VERSION=v1.2.1
 ARG DRONE_EXEC_VERSION=v1.0.0-beta.9
 
