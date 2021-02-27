@@ -31,7 +31,7 @@ steps:
   - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.8
 - name: build-1.9
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.9 .
+  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.9 -f Dockerfile-1.9 .
   - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.9
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.9 nephatrine/drone-ci:1.9
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.9
@@ -79,6 +79,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 0eff55d99c88f1f82c6c808173c81bf8a05888f1378e339a1479ba8320b35088
+hmac: 74b8ae7e99571af12d03fca96a4627660d11dfe866acb20dcccd59b64e4210f8
 
 ...
