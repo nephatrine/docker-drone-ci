@@ -36,12 +36,9 @@ docker run --rm -p 8080:8080 -v /var/run/docker.sock:/run/docker.sock -it nephat
 
 ## Docker Tags
 
-- **nephatrine/drone-server:testing**: Drone Master, Drone-CLI Master, Drone-Runner-Exec Master (Alpine Edge)
-- **nephatrine/drone-server:latest**: Drone v1.10.1, Drone-CLI v1.2.4, Drone-Runner-Exec v1.0.0-b9 (Alpine v3.13)
-- **nephatrine/drone-server:1.9**: Drone v1.9.2, Drone-CLI v1.2.2, Drone-Runner-Exec v1.0.0-b9 (Alpine v3.12)
-- **nephatrine/drone-server:1.8**: Drone v1.8.1, Drone-CLI v1.2.1, Drone-Runner-Exec v1.0.0-b9 (Alpine v3.12)
-- **nephatrine/drone-server:1.7**: Drone v1.7.0, Drone-CLI v1.2.1, Drone-Runner-Exec v1.0.0-b9 (Alpine v3.11)
-- **nephatrine/drone-server:1.6**: Drone v1.6.5, Drone-CLI v1.2.1, Drone-Runner-Exec v1.0.0-b8 (Alpine v3.10)
+- **nephatrine/drone-server:testing**: Drone Master
+- **nephatrine/drone-server:latest**: Drone 1.10.1
+- **nephatrine/drone-server:1.10**: Drone 1.10.1
 
 ## Configuration Variables
 
