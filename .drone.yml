@@ -8,41 +8,10 @@ platform:
   arch: amd64
 
 steps:
-- name: build-1.6
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.6 -f Dockerfile-1.6 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.6
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.6 nephatrine/drone-ci:1.6
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.6
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.6
-- name: build-1.7
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.7 -f Dockerfile-1.7 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.7
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.7 nephatrine/drone-ci:1.7
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.7
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.7
-- name: build-1.8
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.8 -f Dockerfile-1.8 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.8
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.8 nephatrine/drone-ci:1.8
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.8
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.8
-- name: build-1.9
-  commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.9 -f Dockerfile-1.9 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.9
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.9 nephatrine/drone-ci:1.9
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.9
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.9
 - name: build-1.10
   commands:
-  - docker build --pull -t pdr.nephatrine.net/nephatrine/drone-ci:1.10 .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:1.10
-  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:1.10 nephatrine/drone-ci:1.10
+  - docker build -t nephatrine/drone-ci:1.10 .
   - HOME=/mnt/config/home docker push nephatrine/drone-ci:1.10
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:1.10
 - name: build-latest
   commands:
   - docker tag nephatrine/drone-ci:1.10 pdr.nephatrine.net/nephatrine/drone-ci:latest
@@ -61,7 +30,7 @@ steps:
 - name: notify
   image: appleboy/drone-discord
   settings:
-    avatar_url: https://files.nephatrine.net/Images/Buttons/Drone.png
+    avatar_url: https://nephatrine.net/images/buttons/drone-ci.png
     message: "Automated build of **{{repo.name}}:{{commit.branch}}** has returned [{{build.status}}]({{build.link}})."
     username: DroneCI
     webhook_id:
@@ -79,6 +48,6 @@ trigger:
 
 ---
 kind: signature
-hmac: 74b8ae7e99571af12d03fca96a4627660d11dfe866acb20dcccd59b64e4210f8
+hmac: 0c2c3fbfe63fc90c50e2052cb755611fd9d7b69ac2a3c8e41decebf68cbd8e66
 
 ...

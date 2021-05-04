@@ -1,4 +1,4 @@
-FROM nephatrine/alpine-s6:3.13
+FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
