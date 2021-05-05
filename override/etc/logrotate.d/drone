@@ -1,3 +1,8 @@
+/mnt/config/log/drone-docker-runner.log {
+	missingok
+	notifempty
+}
+
 /mnt/config/log/drone-exec-runner.log {
 	missingok
 	notifempty

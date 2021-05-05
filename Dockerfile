@@ -10,6 +10,7 @@ RUN echo "====== INSTALL PACKAGES ======" \
 
 ARG DRONE_VERSION=v1.10.1
 ARG DRONE_CLI_VERSION=v1.2.4
+ARG DRONE_DOCKER_VERSION=v1.6.3
 ARG DRONE_EXEC_VERSION=v1.0.0-beta.9
 
 RUN echo "====== COMPILE DRONE ======" \
@@ -22,6 +23,8 @@ RUN echo "====== COMPILE DRONE ======" \
  && git -C /usr/src clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/drone/drone-cli && cd /usr/src/drone-cli \
  && go install ./... \
  && mv /root/go/bin/drone /usr/bin/ \
+ && git -C /usr/src clone -b "$DRONE_DOCKER_VERSION" --single-branch --depth=1 https://github.com/drone-runners/drone-runner-docker && cd /usr/src/drone-runner-docker \
+ && go build -o /usr/bin/drone-runner-docker \
  && git -C /usr/src clone -b "$DRONE_EXEC_VERSION" --single-branch --depth=1 https://github.com/drone-runners/drone-runner-exec && cd /usr/src/drone-runner-exec \
  && go build -o /usr/bin/drone-runner-exec \
  && cd /usr/src && rm -rf /root/go /usr/src/* \
