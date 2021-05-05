@@ -18,8 +18,6 @@ RUN echo "====== COMPILE DRONE ======" \
  && git -C /usr/src clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/drone/drone && cd /usr/src/drone \
  && go install -tags nolimit ./cmd/drone-server \
  && mv /root/go/bin/drone-server /usr/bin/ \
- && go install ./cmd/drone-agent \
- && mv /root/go/bin/drone-agent /usr/bin/ \
  && git -C /usr/src clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/drone/drone-cli && cd /usr/src/drone-cli \
  && go install ./... \
  && mv /root/go/bin/drone /usr/bin/ \
