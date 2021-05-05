@@ -22,11 +22,10 @@ FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
 - [Drone](https://drone.io/)
 - [SQLite](https://www.sqlite.org/)
 
-This container includes a server, agent, and exec runner. This is not a
+This container includes a server, docker runner, and exec runner. This is not a
 single-server configuration so you can easily add more agents and runners in
-separate containers as needed. You can pass variable ``DRONE_AGENT_DISABLED``
-to disable both the agent and exec runner. You can similarly pass
-``DRONE_EXEC_DISABLED`` to just disable the exec runner.
+separate containers as needed. You can pass variable ``DRONE_DOCKER_DISABLED``
+or ``DRONE_EXEC_DISABLED`` to disable one or both runners.
 
 You can spin up a quick temporary test container like this:
 
