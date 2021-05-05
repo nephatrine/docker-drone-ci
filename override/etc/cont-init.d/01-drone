@@ -3,12 +3,11 @@
 if [[ ! -d /mnt/config/data/drone/db ]]; then
   s6-setuidgid guardian mkdir -p /mnt/config/data/drone/db
 fi
+if [[ ! -d /mnt/config/etc/drone ]]; then
+  s6-setuidgid guardian mkdir -p /mnt/config/etc/drone
+fi
 
 if [[ ! -e /mnt/config/etc/drone/config ]]; then
-  if [[ ! -d /mnt/config/etc/drone ]]; then
-    s6-setuidgid guardian mkdir -p /mnt/config/etc/drone
-  fi
-
   s6-setuidgid guardian touch /mnt/config/etc/drone/config
 
   if [[ -z "${DRONE_DATABASE_SECRET}" ]]; then
