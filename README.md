@@ -1,4 +1,4 @@
-[Git](https://code.nephatrine.net/nephatrine/docker-drone-ci) |
+[Git](https://code.nephatrine.net/nephatrine/docker-drone-ci/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/drone-ci/) |
 [unRAID](https://code.nephatrine.net/nephatrine/unraid-containers)
 
@@ -19,6 +19,9 @@ INSTEAD OR PURCHASE A LICENSE.**
 **YOU WILL NEED TO USE A SEPARATE REVERSE PROXY SERVER TO SECURE THIS SERVICE.
 FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
 
+- [Alpine Linux](https://alpinelinux.org/)
+- [Skarnet Software](https://skarnet.org/software/)
+- [S6 Overlay](https://github.com/just-containers/s6-overlay)
 - [Drone](https://drone.io/)
 - [SQLite](https://www.sqlite.org/)
 
@@ -35,9 +38,8 @@ docker run --rm -p 8080:8080 -v /var/run/docker.sock:/run/docker.sock -it nephat
 
 ## Docker Tags
 
-- **nephatrine/drone-server:testing**: Drone Master
-- **nephatrine/drone-server:latest**: Drone 1.10.1
-- **nephatrine/drone-server:1.10**: Drone 1.10.1
+- **nephatrine/drone-server:testing**: Drone v1.x
+- **nephatrine/drone-server:latest**: Drone v1.x
 
 ## Configuration Variables
 
