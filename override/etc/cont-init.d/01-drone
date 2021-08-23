@@ -11,7 +11,7 @@ if [[ ! -e /mnt/config/etc/drone/config ]]; then
   s6-setuidgid guardian touch /mnt/config/etc/drone/config
 
   if [[ -z "${DRONE_DATABASE_SECRET}" ]]; then
-    echo "export DRONE_DATABASE_SECRET=$(libressl rand -hex 16)" >> /mnt/config/etc/drone/config
+    echo "export DRONE_DATABASE_SECRET=$(openssl rand -hex 16)" >> /mnt/config/etc/drone/config
   fi
   if [[ -z "${DRONE_GITEA_SERVER}" && -z "${DRONE_GITHUB_SERVER}" && -z "${DRONE_GITLAB_SERVER}" ]]; then
     echo "#export DRONE_GITEA_SERVER=https://try.gitea.io" >> /mnt/config/etc/drone/config
@@ -25,7 +25,7 @@ if [[ ! -e /mnt/config/etc/drone/config ]]; then
     echo "#export DRONE_GITLAB_CLIENT_SECRET=" >> /mnt/config/etc/drone/config
   fi
   if [[ -z "${DRONE_RPC_SECRET}" ]]; then
-    echo "export DRONE_RPC_SECRET=$(libressl rand -hex 16)" >> /mnt/config/etc/drone/config
+    echo "export DRONE_RPC_SECRET=$(openssl rand -hex 16)" >> /mnt/config/etc/drone/config
   fi
   if [[ -z "${DRONE_SERVER_PROTO}" ]]; then
     echo "export DRONE_SERVER_PROTO=http" >> /mnt/config/etc/drone/config
