@@ -1,17 +1,17 @@
 #!/usr/bin/with-contenv bash
 
-if [[ -e /mnt/config/etc/drone/config ]]; then
-  . /mnt/config/etc/drone/config
+if [[ -f "$DRONE_CONF" ]]; then
+  . "$DRONE_CONF"
 fi
 
-export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"/mnt/config/log/drone-exec-runner.log"}
+export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"$CONF_ROOT/log/drone-exec-runner.log"}
 export DRONE_RPC_PROTO=${DRONE_RPC_PROTO:-"${DRONE_SERVER_PROTO}"}
 export DRONE_RPC_HOST=${DRONE_RPC_HOST:-"${DRONE_SERVER_HOST}"}
 export DRONE_RUNNER_OS=${DRONE_RUNNER_OS:-"linux"}
 export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"amd64"}
 export DRONE_RUNNER_NAME="$(hostname)-exec"}
 
-if [[ ! -z "${DRONE_RPC_SECRET}" && ! -z "${DRONE_RPC_HOST}" && -z "${DRONE_AGENT_DISABLED}" && -z "${DRONE_EXEC_DISABLED}" ]]; then
+if [[ -n "${DRONE_RPC_SECRET}" && -n "${DRONE_RPC_HOST}" && -z "${DRONE_AGENT_DISABLED}" && -z "${DRONE_EXEC_DISABLED}" ]]; then
   exec s6-setuidgid guardian /usr/bin/drone-runner-exec
 else
   sleep 30

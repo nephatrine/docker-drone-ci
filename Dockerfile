@@ -1,6 +1,9 @@
 FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
+ENV CONF_ROOT=/mnt/config
+ENV DRONE_CONF="$CONF_ROOT/etc/drone/config"
+
 ARG DRONE_VERSION=v2.0.6
 ARG DRONE_CLI_VERSION=v1.3.1
 ARG DRONE_DOCKER_VERSION=v1.6.3
