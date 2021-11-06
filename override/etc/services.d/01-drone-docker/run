@@ -5,8 +5,8 @@ if [[ -f "$DRONE_CONF" ]]; then
 fi
 
 export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"$CONF_ROOT/log/drone-docker-runner.log"}
-export DRONE_RPC_PROTO=${DRONE_RPC_PROTO:-"${DRONE_SERVER_PROTO}"}
-export DRONE_RPC_HOST=${DRONE_RPC_HOST:-"${DRONE_SERVER_HOST}"}
+export DRONE_RPC_PROTO=${DRONE_RPC_PROTO:-http}
+export DRONE_RPC_HOST=${DRONE_RPC_HOST:-localhost:8080}
 export DRONE_RUNNER_OS=${DRONE_RUNNER_OS:-"linux"}
 export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"amd64"}
 export DRONE_RUNNER_NAME="$(hostname)-docker"}
