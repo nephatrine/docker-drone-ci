@@ -7,11 +7,11 @@ ARG DRONE_DOCKER_VERSION=v1.8.0
 ARG DRONE_EXEC_VERSION=v1.0.0-beta.9
 ARG DRONE_SSH_VERSION=v1.0.1
 RUN echo "====== COMPILE DRONE ======" \
- && apk add \
+ && apk add --no-cache \
   docker \
   git \
   sqlite \
- && apk add --virtual .build-drone go \
+ && apk add --no-cache --virtual .build-drone go \
  && git -C /usr/src clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/harness/drone && cd /usr/src/drone \
  && go install -tags nolimit ./cmd/drone-server \
  && mv /root/go/bin/drone-server /usr/bin/ \
@@ -25,7 +25,7 @@ RUN echo "====== COMPILE DRONE ======" \
  && git -C /usr/src clone -b "$DRONE_SSH_VERSION" --single-branch --depth=1 https://github.com/drone-runners/drone-runner-ssh \
  && cd /usr/src/drone-runner-ssh && go build -o /usr/bin/drone-runner-ssh \
  && cd /usr/src && rm -rf /root/go /usr/src/* \
- && apk del --purge .build-drone && rm -rf /var/cache/apk/*
+ && apk del --purge .build-drone
 
 COPY override /
 EXPOSE 8080/tcp
