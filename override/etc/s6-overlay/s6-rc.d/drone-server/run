@@ -4,9 +4,6 @@
 
 if [[ ! -d /mnt/config/data ]]; then
   /command/s6-setuidgid guardian mkdir -p /mnt/config/data
-  if [[ -f /mnt/config/data/drone/db/drone.db ]]; then
-    /command/s6-setuidgid guardian mv /mnt/config/data/drone/db/drone.db /mnt/config/data/drone.sqlite
-  fi
 fi
 
 # Build Drone Configuration
