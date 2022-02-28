@@ -8,8 +8,8 @@ fi
 
 # Start Runner
 
-if [[ -f /mnt/config/etc/drone/config ]]; then
-  . /mnt/config/etc/drone/config
+if [[ -f /mnt/config/etc/drone-config ]]; then
+  . /mnt/config/etc/drone-config
 fi
 export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"/mnt/config/log/drone-exec-runner.log"}
 export DRONE_RPC_PROTO=${DRONE_RPC_PROTO:-"${DRONE_SERVER_PROTO}"}
@@ -19,6 +19,7 @@ export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"amd64"}
 export DRONE_RUNNER_NAME="$(hostname)-exec"}
 
 if [[ ! -z "${DRONE_RPC_SECRET}" && ! -z "${DRONE_RPC_HOST}" && -z "${DRONE_AGENT_DISABLED}" && -z "${DRONE_EXEC_DISABLED}" ]]; then
+  export HOME=/mnt/config/home
   exec /command/s6-setuidgid guardian /usr/bin/drone-runner-exec
 else
   sleep 300
