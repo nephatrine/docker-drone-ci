@@ -1,9 +1,9 @@
 FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
-ARG DRONE_VERSION=v2.0.6
-ARG DRONE_CLI_VERSION=v1.3.1
-ARG DRONE_DOCKER_VERSION=v1.6.3
+ARG DRONE_VERSION=v2.9.1
+ARG DRONE_CLI_VERSION=v1.5.0
+ARG DRONE_DOCKER_VERSION=v1.8.0
 ARG DRONE_EXEC_VERSION=v1.0.0-beta.9
 ARG DRONE_SSH_VERSION=v1.0.1
 RUN echo "====== COMPILE DRONE ======" \
@@ -12,10 +12,10 @@ RUN echo "====== COMPILE DRONE ======" \
   git \
   sqlite \
  && apk add --virtual .build-drone go \
- && git -C /usr/src clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/drone/drone && cd /usr/src/drone \
+ && git -C /usr/src clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/harness/drone && cd /usr/src/drone \
  && go install -tags nolimit ./cmd/drone-server \
  && mv /root/go/bin/drone-server /usr/bin/ \
- && git -C /usr/src clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/drone/drone-cli && cd /usr/src/drone-cli \
+ && git -C /usr/src clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/harness/drone-cli && cd /usr/src/drone-cli \
  && go install ./... \
  && mv /root/go/bin/drone /usr/bin/ \
  && git -C /usr/src clone -b "$DRONE_DOCKER_VERSION" --single-branch --depth=1 https://github.com/drone-runners/drone-runner-docker \
