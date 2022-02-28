@@ -1,5 +1,15 @@
 #!/usr/bin/with-contenv /bin/bash
 
+# Configure Docker Group
+
+if [[ -e /run/docker.sock ]]; then
+  DGID=`/bin/stat /run/docker.sock | /usr/bin/tr -d '/' | /bin/grep Gid | /usr/bin/awk '{print $(NF-1)}'`
+  if [[ ! -z "${DGID}" ]]; then
+    /usr/sbin/groupmod -o -g "$DGID" docker
+    /usr/sbin/usermod -a -G docker guardian
+  fi
+fi
+
 # Create Drone Database Directory
 
 if [[ ! -d /mnt/config/data ]]; then
