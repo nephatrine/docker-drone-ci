@@ -9,10 +9,10 @@ fi
 # Configure Docker Group
 
 if [[ -e /run/docker.sock ]]; then
-  DGID=`stat /run/docker.sock | tr -d '/' | grep Gid | awk '{print $(NF-1)}'`
+  DGID=`/bin/stat /run/docker.sock | /usr/bin/tr -d '/' | /bin/grep Gid | /usr/bin/awk '{print $(NF-1)}'`
   if [[ ! -z "${DGID}" ]]; then
-    groupmod -o -g "$DGID" docker
-    usermod -a -G docker guardian
+    /usr/sbin/groupmod -o -g "$DGID" docker
+    /usr/sbin/usermod -a -G docker guardian
   fi
 fi
 
