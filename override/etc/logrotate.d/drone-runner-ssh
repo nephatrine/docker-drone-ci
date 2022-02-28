@@ -1,0 +1,4 @@
+/mnt/config/log/drone-ssh-runner.log {
+	missingok
+	notifempty
+}
