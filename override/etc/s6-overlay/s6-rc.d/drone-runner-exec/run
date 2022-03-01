@@ -1,5 +1,9 @@
 #!/command/with-contenv /bin/bash
 
+while pgrep drone-server >/dev/null; do
+  sleep 5
+done
+
 # Create Log Directory
 
 if [[ ! -d /mnt/config/log ]]; then
