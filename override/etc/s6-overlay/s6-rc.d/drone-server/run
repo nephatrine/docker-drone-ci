@@ -13,7 +13,7 @@ fi
 # Create Drone Database Directory
 
 if [[ ! -d /mnt/config/data ]]; then
-  /command/s6-setuidgid guardian mkdir -p /mnt/config/data
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data
 fi
 if [[ -f /mnt/config/data/drone/db/drone.db && ! -f /mnt/config/data/drone.sqlite ]]; then
   # Migrate Old Location
@@ -33,18 +33,18 @@ if [[ ! -f /mnt/config/etc/drone-config ]]; then
   /command/s6-setuidgid guardian /bin/touch /mnt/config/etc/drone-config
 
   if [[ -z "${DRONE_DATABASE_SECRET}" ]]; then
-    /bin/echo "export DRONE_DATABASE_SECRET=$(/usr/bin/openssl rand -hex 16)" >> /mnt/config/etc/drone-config
+    echo "export DRONE_DATABASE_SECRET=$(/usr/bin/openssl rand -hex 16)" >> /mnt/config/etc/drone-config
   fi
   if [[ -z "${DRONE_GITEA_SERVER}" && -z "${DRONE_GITHUB_SERVER}" && -z "${DRONE_GITLAB_SERVER}" ]]; then
-    /bin/echo "#export DRONE_GITEA_SERVER=https://try.gitea.io" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITEA_CLIENT_ID=" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITEA_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITHUB_SERVER=https://github.com" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITHUB_CLIENT_ID=" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITHUB_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITLAB_SERVER=https://gitlab.com" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITLAB_CLIENT_ID=" >> /mnt/config/etc/drone-config
-    /bin/echo "#export DRONE_GITLAB_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITEA_SERVER=https://try.gitea.io" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITEA_CLIENT_ID=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITEA_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITHUB_SERVER=https://github.com" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITHUB_CLIENT_ID=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITHUB_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITLAB_SERVER=https://gitlab.com" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITLAB_CLIENT_ID=" >> /mnt/config/etc/drone-config
+    echo "#export DRONE_GITLAB_CLIENT_SECRET=" >> /mnt/config/etc/drone-config
   fi
   if [[ -z "${DRONE_RPC_SECRET}" ]]; then
     echo "export DRONE_RPC_SECRET=$(openssl rand -hex 16)" >> /mnt/config/etc/drone-config

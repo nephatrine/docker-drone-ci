@@ -1,6 +1,6 @@
 #!/command/with-contenv /bin/bash
 
-while pgrep drone-server >/dev/null; do
+while /usr/bin/pgrep drone-server >/dev/null; do
   sleep 5
 done
 
