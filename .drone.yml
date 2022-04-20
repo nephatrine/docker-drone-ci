@@ -39,10 +39,10 @@ steps:
 
 ---
 kind: pipeline
-name: after
+name: notify
 
 steps:
-- name: notify
+- name: notify-status
   image: appleboy/drone-discord
   failure: ignore
   settings:
@@ -64,6 +64,6 @@ trigger:
 
 ---
 kind: signature
-hmac: ab4c464acf36166ebdc0171a71d5f1ce9a34a3b61cb841ae4ce13bec58f92153
+hmac: f21f7bcff1c61c4e5fb3f639c66be94ea76c1621dd8200710dd32056104bd1ca
 
 ...
