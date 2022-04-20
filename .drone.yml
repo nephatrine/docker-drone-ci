@@ -9,12 +9,33 @@ platform:
 
 steps:
 - name: build
+  environment:
+    PDR_USER:
+      from_secret: docker-user-pdr
+    PDR_PASS:
+      from_secret: docker-pass-pdr
   commands:
+  - docker build -t pdr.nephatrine.net/nephatrine/drone-ci:cached --target builder .
   - docker build -t pdr.nephatrine.net/nephatrine/drone-ci:latest .
-  - HOME=/mnt/config/home docker push pdr.nephatrine.net/nephatrine/drone-ci:latest
+  - docker login -p "$PDR_PASS" -u "$PDR_USER" pdr.nephatrine.net
+  - docker push pdr.nephatrine.net/nephatrine/drone-ci:latest
+  - docker logout pdr.nephatrine.net
+- name: publish
+  environment:
+    DOCKER_USER:
+      from_secret: docker-user
+    DOCKER_PASS:
+      from_secret: docker-pass
+  commands:
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:latest
-  - HOME=/mnt/config/home docker push nephatrine/drone-ci:latest
-  - docker rmi pdr.nephatrine.net/nephatrine/drone-ci:latest
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2.9.1
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2.9
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2
+  - docker login -p "$DOCKER_PASS" -u "$DOCKER_USER"
+  - docker push -a nephatrine/drone-ci
+  - docker logout
+  depends_on:
+  - build
 
 ---
 kind: pipeline
