@@ -1,4 +1,4 @@
-FROM pdr.nephatrine.net/nephatrine/alpine-builder:latest AS builder
+FROM nephatrine/alpine:builder AS builder
 
 ARG DRONE_VERSION=v2.9.1
 ARG DRONE_CLI_VERSION=v1.5.0
@@ -23,7 +23,7 @@ RUN echo "====== COMPILE DRONE-RUNNERS ======" \
  && cd /usr/src/drone-runner-exec && go build -o /usr/bin/drone-runner-exec \
  && cd /usr/src/drone-runner-ssh && go build -o /usr/bin/drone-runner-ssh
  
-FROM pdr.nephatrine.net/nephatrine/alpine-s6:latest
+FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
