@@ -1,4 +1,4 @@
-FROM nephatrine/nxbuilder:alpine AS builder
+FROM nephatrine/nxbuilder:golang AS builder
 
 ARG DRONE_VERSION=v2.16.0
 ARG DRONE_CLI_VERSION=v1.7.0
@@ -19,22 +19,22 @@ RUN echo "====== COMPILE DRONE-CLI ======" \
  && cd ${HOME}/drone-cli \
  && go install ./...
 RUN echo "====== COMPILE DRONE-RUNNERS ======" \
- && cd ${HOME}/drone-runner-docker && go build -o /usr/bin/drone-runner-docker \
- && cd ${HOME}/drone-runner-exec && go build -o /usr/bin/drone-runner-exec \
- && cd ${HOME}/drone-runner-ssh && go build -o /usr/bin/drone-runner-ssh
- 
+ && cd ${HOME}/drone-runner-docker && go build -o /go/bin/drone-runner-docker \
+ && cd ${HOME}/drone-runner-exec && go build -o /go/bin/drone-runner-exec \
+ && cd ${HOME}/drone-runner-ssh && go build -o /go/bin/drone-runner-ssh
+
 FROM nephatrine/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
 RUN echo "====== INSTALL PACKAGES ======" \
- && apk add --no-cache docker git sqlite
+ && apk add --no-cache docker git git-lfs sqlite
 
 COPY --from=builder \
- /usr/bin/drone-runner-docker \
- /usr/bin/drone-runner-exec \
- /usr/bin/drone-runner-ssh \
- /root/go/bin/drone-server \
- /root/go/bin/drone /usr/bin/
+ /go/bin/drone-runner-docker \
+ /go/bin/drone-runner-exec \
+ /go/bin/drone-runner-ssh \
+ /go/bin/drone-server \
+ /go/bin/drone /usr/bin/
 COPY override /
 
 EXPOSE 8080/tcp

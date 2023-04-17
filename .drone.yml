@@ -28,6 +28,7 @@ steps:
       from_secret: docker-pass
   commands:
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:latest
+  - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2.16.0
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2.16
   - docker tag pdr.nephatrine.net/nephatrine/drone-ci:latest nephatrine/drone-ci:2
   - docker login -p "$DOCKER_PASS" -u "$DOCKER_USER"
@@ -63,6 +64,6 @@ trigger:
 
 ---
 kind: signature
-hmac: fe258cad7bddf2345f0b6666fb8e3375b576151ae2694c847d78555936870cfe
+hmac: 84060c4f3f1e3ce9ffeaa7fd25df69612a5142378b71f284c8e60bd8708a041e
 
 ...
