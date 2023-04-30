@@ -3,34 +3,16 @@
 export HOME=/mnt/config/home
 cd /mnt/config/home
 
-# Configure Docker Group
-
-if [[ -e /run/docker.sock ]]; then
-  DGID=`/bin/stat /run/docker.sock | /usr/bin/tr -d '/' | /bin/grep Gid | /usr/bin/awk '{print $(NF-1)}'`
-  if [[ ! -z "${DGID}" ]]; then
-    /usr/sbin/groupmod -o -g "$DGID" docker
-    /usr/sbin/usermod -a -G docker guardian
-  fi
-fi
-
 # Create Drone Database Directory
 
 if [[ ! -d /mnt/config/data ]]; then
   /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/data
-fi
-if [[ -f /mnt/config/data/drone/db/drone.db && ! -f /mnt/config/data/drone.sqlite ]]; then
-  # Migrate Old Location
-  /command/s6-setuidgid guardian /bin/mv /mnt/config/data/drone/db/drone.db /mnt/config/data/drone.sqlite
 fi
 
 # Build Drone Configuration
 
 if [[ ! -d /mnt/config/etc ]]; then
   /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/etc
-fi
-if [[ -f /mnt/config/etc/drone/config && ! -f /mnt/config/etc/drone-config ]]; then
-  # Migrate Old Location
-  /command/s6-setuidgid guardian /bin/mv /mnt/config/etc/drone/config /mnt/config/etc/drone-config
 fi
 if [[ ! -f /mnt/config/etc/drone-config ]]; then
   /command/s6-setuidgid guardian /bin/touch /mnt/config/etc/drone-config

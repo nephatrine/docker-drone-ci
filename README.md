@@ -16,24 +16,21 @@ AND USE REQUIRES YOU MEET CERTAIN REQUIREMENTS AS LAID OUT IN THE
 IF YOU DO NOT MEET THOSE REQUIREMENTS YOU MUST EITHER USE THE COMMUNITY VERSION
 INSTEAD OR PURCHASE A LICENSE.**
 
-**YOU WILL NEED TO USE A SEPARATE REVERSE PROXY SERVER TO SECURE THIS SERVICE.
-FOR INSTANCE, AN [NGINX](https://nginx.com/) REVERSE PROXY CONTAINER.**
+To secure this service, we suggest a separate reverse proxy server, such as an
+[NGINX](https://nginx.com/) container.
 
-- [Alpine Linux](https://alpinelinux.org/)
-- [Skarnet Software](https://skarnet.org/software/)
-- [S6 Overlay](https://github.com/just-containers/s6-overlay)
-- [Drone](https://drone.io/)
-- [SQLite](https://www.sqlite.org/)
+- [Alpine Linux](https://alpinelinux.org/) w/ [S6 Overlay](https://github.com/just-containers/s6-overlay)
+- [Drone](https://drone.io/) w/ [SQLite](https://www.sqlite.org/)
 
-This container includes a server, docker runner, and exec runner. This is not a
+This container only includes a server and exec runner. This is not a
 single-server configuration so you can easily add more agents and runners in
-separate containers as needed. You can pass variable ``DRONE_DOCKER_DISABLED``
-or ``DRONE_EXEC_DISABLED`` to disable one or both runners.
+separate containers as needed. You can pass variable ``DRONE_EXEC_DISABLED``
+to disable the included runner.
 
 You can spin up a quick temporary test container like this:
 
 ~~~
-docker run --rm -p 8080:8080 -v /var/run/docker.sock:/run/docker.sock -it nephatrine/drone-ci:latest /bin/bash
+docker run --rm -p 8080:8080 -it nephatrine/drone-ci:latest /bin/bash
 ~~~
 
 ## Docker Tags

@@ -1,4 +1,0 @@
-/mnt/config/log/drone-docker-runner.log {
-	missingok
-	notifempty
-}
