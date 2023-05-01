@@ -2,8 +2,6 @@
 [Docker](https://hub.docker.com/r/nephatrine/drone-ci/) |
 [unRAID](https://code.nephatrine.net/nephatrine/unraid-containers)
 
-[![Build Status](https://ci.nephatrine.net/api/badges/nephatrine/docker-drone-ci/status.svg?ref=refs/heads/master)](https://ci.nephatrine.net/nephatrine/docker-drone-ci)
-
 # Drone CI/CD Server
 
 This docker image contains a Drone server to self-host your own continuous
