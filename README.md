@@ -76,7 +76,6 @@ logs, and application state (e.g. databases) so they are not lost on image
 update.
 
 - ``/mnt/config``: Persistent Data.
-- ``/run/docker.sock`: Docker Daemon Socket.
 
 Do not share ``/mnt/config`` volumes between multiple containers as they may
 interfere with the operation of one another.
