@@ -34,6 +34,22 @@ jobs:
         with:
           title: "Container Build (AARCH64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
+  buildarmhf:
+    if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
+    runs-on: nephnet-armhf
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Docker Build
+        run: |
+          docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-cached --target builder ${{ gitea.workspace }}
+          docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7 ${{ gitea.workspace }}
+      - name: Notify Discord
+        uses: actions/discord-status@v1
+        if: always()
+        with:
+          title: "Container Build (ARMV7L)"
+          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   packageamd64:
     if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
     needs: [buildamd64]
@@ -60,9 +76,22 @@ jobs:
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
         run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8
+  packagearmhf:
+    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
+    needs: [buildarmhf]
+    runs-on: nephnet-armhf
+    steps:
+      - name: Docker Login
+        uses: actions/docker-login@v2
+        with:
+          registry: code.nephatrine.net
+          username: ${{ gitea.actor }}
+          password: ${{ secrets.PACKAGER_TOKEN }}
+      - name: Docker Push
+        run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7
   manifestpkg:
     if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [packageamd64, packagearm64]
+    needs: [packageamd64, packagearm64, packagearmhf]
     runs-on: nephnet
     steps:
       - name: Docker Login
@@ -73,7 +102,7 @@ jobs:
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Manifest
         run: |
-          docker manifest create code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }} --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64 --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8
+          docker manifest create code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }} --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64 --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8  --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7
           docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}
   publishamd64:
     if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
@@ -118,9 +147,23 @@ jobs:
         run: |
           docker tag code.nephatrine.net/nephnet/drone-ci:master-arm64v8 nephatrine/drone-ci:latest-arm64v8
           docker push nephatrine/drone-ci:latest-arm64v8
+  publisharmhf:
+    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
+    needs: [buildarmhf]
+    runs-on: nephnet-armhf
+    steps:
+      - name: Docker Login
+        uses: actions/docker-login@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Docker Push
+        run: |
+          docker tag code.nephatrine.net/nephnet/drone-ci:master-armv7 nephatrine/drone-ci:latest-armv7
+          docker push nephatrine/drone-ci:latest-armv7
   manifesthub:
     if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [publishamd64, publisharm64]
+    needs: [publishamd64, publisharm64, publisharmhf]
     runs-on: nephnet
     steps:
       - name: Docker Login
@@ -130,10 +173,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
         run: |
-          docker manifest create nephatrine/drone-ci:2.16.0 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8
-          docker manifest create nephatrine/drone-ci:2.16 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8
-          docker manifest create nephatrine/drone-ci:2 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8
-          docker manifest create nephatrine/drone-ci:latest --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8
+          docker manifest create nephatrine/drone-ci:2.16.0 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
+          docker manifest create nephatrine/drone-ci:2.16 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
+          docker manifest create nephatrine/drone-ci:2 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
+          docker manifest create nephatrine/drone-ci:latest --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
           docker manifest push --purge nephatrine/drone-ci:2.16.0
           docker manifest push --purge nephatrine/drone-ci:2.16
           docker manifest push --purge nephatrine/drone-ci:2
