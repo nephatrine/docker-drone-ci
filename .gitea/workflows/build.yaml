@@ -2,9 +2,9 @@ name: Build Container Image
 run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_name }}
 on: [push, workflow_call]
 jobs:
-  buildamd64:
+  build_amd64:
     if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
-    runs-on: nephnet
+    runs-on: nephnet-amd64
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -12,13 +12,21 @@ jobs:
         run: |
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64 ${{ gitea.workspace }}
+      - name: Docker Login
+        uses: actions/docker-login@v2
+        with:
+          registry: code.nephatrine.net
+          username: ${{ gitea.actor }}
+          password: ${{ secrets.PACKAGER_TOKEN }}
+      - name: Docker Push
+        run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
         with:
           title: "Container Build (X86_64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  buildarm64:
+  build_arm64:
     if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
     runs-on: nephnet-arm64
     steps:
@@ -28,13 +36,21 @@ jobs:
         run: |
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8 ${{ gitea.workspace }}
+      - name: Docker Login
+        uses: actions/docker-login@v2
+        with:
+          registry: code.nephatrine.net
+          username: ${{ gitea.actor }}
+          password: ${{ secrets.PACKAGER_TOKEN }}
+      - name: Docker Push
+        run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8
       - name: Notify Discord
         uses: actions/discord-status@v1
         if: always()
         with:
           title: "Container Build (AARCH64)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  buildarmhf:
+  build_armhf:
     if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
     runs-on: nephnet-armhf
     steps:
@@ -44,43 +60,6 @@ jobs:
         run: |
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-cached --target builder ${{ gitea.workspace }}
           docker build --pull -t code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7 ${{ gitea.workspace }}
-      - name: Notify Discord
-        uses: actions/discord-status@v1
-        if: always()
-        with:
-          title: "Container Build (ARMV7L)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  packageamd64:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildamd64]
-    runs-on: nephnet
-    steps:
-      - name: Docker Login
-        uses: actions/docker-login@v2
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64
-  packagearm64:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildarm64]
-    runs-on: nephnet-arm64
-    steps:
-      - name: Docker Login
-        uses: actions/docker-login@v2
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Docker Push
-        run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8
-  packagearmhf:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildarmhf]
-    runs-on: nephnet-armhf
-    steps:
       - name: Docker Login
         uses: actions/docker-login@v2
         with:
@@ -89,9 +68,14 @@ jobs:
           password: ${{ secrets.PACKAGER_TOKEN }}
       - name: Docker Push
         run: docker push code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7
-  manifestpkg:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [packageamd64, packagearm64, packagearmhf]
+      - name: Notify Discord
+        uses: actions/discord-status@v1
+        if: always()
+        with:
+          title: "Container Build (ARMV7L)"
+          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
+  build_manifest:
+    needs: [build_amd64, build_arm64, build_armhf]
     runs-on: nephnet
     steps:
       - name: Docker Login
@@ -104,10 +88,10 @@ jobs:
         run: |
           docker manifest create code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }} --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-amd64 --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-arm64v8  --amend code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}-armv7
           docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${{ gitea.ref_name }}
-  publishamd64:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildamd64]
-    runs-on: nephnet
+  publish_amd64:
+    if: gitea.ref_name == 'master'
+    needs: [build_amd64]
+    runs-on: nephnet-amd64
     steps:
       - name: Check Base Image
         if: github.event_name != 'push'
@@ -133,9 +117,9 @@ jobs:
           description: "The container image was pushed to [DockerHub](https://hub.docker.com/repository/docker/nephatrine/drone-ci/general).\nPull `nephatrine/drone-ci:latest-amd64` for the newest image."
           nodetail: true
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
-  publisharm64:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildarm64]
+  publish_arm64:
+    if: gitea.ref_name == 'master'
+    needs: [build_arm64]
     runs-on: nephnet-arm64
     steps:
       - name: Docker Login
@@ -147,9 +131,9 @@ jobs:
         run: |
           docker tag code.nephatrine.net/nephnet/drone-ci:master-arm64v8 nephatrine/drone-ci:latest-arm64v8
           docker push nephatrine/drone-ci:latest-arm64v8
-  publisharmhf:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [buildarmhf]
+  publish_armhf:
+    if: gitea.ref_name == 'master'
+    needs: [build_armhf]
     runs-on: nephnet-armhf
     steps:
       - name: Docker Login
@@ -161,9 +145,8 @@ jobs:
         run: |
           docker tag code.nephatrine.net/nephnet/drone-ci:master-armv7 nephatrine/drone-ci:latest-armv7
           docker push nephatrine/drone-ci:latest-armv7
-  manifesthub:
-    if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
-    needs: [publishamd64, publisharm64, publisharmhf]
+  publish_manifest:
+    needs: [publish_amd64, publish_arm64, publish_armhf]
     runs-on: nephnet
     steps:
       - name: Docker Login
@@ -181,3 +164,11 @@ jobs:
           docker manifest push --purge nephatrine/drone-ci:2.16
           docker manifest push --purge nephatrine/drone-ci:2
           docker manifest push --purge nephatrine/drone-ci:latest
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Docker Describe
+        uses: actions/dockerhub-update-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+          repository: nephatrine/drone-ci
