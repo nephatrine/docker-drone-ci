@@ -156,12 +156,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Docker Manifest
         run: |
-          docker manifest create nephatrine/drone-ci:2.16.0 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
-          docker manifest create nephatrine/drone-ci:2.16 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
+          docker manifest create nephatrine/drone-ci:2.17.0 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
+          docker manifest create nephatrine/drone-ci:2.17 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
           docker manifest create nephatrine/drone-ci:2 --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
           docker manifest create nephatrine/drone-ci:latest --amend nephatrine/drone-ci:latest-amd64 --amend nephatrine/drone-ci:latest-arm64v8 --amend nephatrine/drone-ci:latest-armv7
-          docker manifest push --purge nephatrine/drone-ci:2.16.0
-          docker manifest push --purge nephatrine/drone-ci:2.16
+          docker manifest push --purge nephatrine/drone-ci:2.17.0
+          docker manifest push --purge nephatrine/drone-ci:2.17
           docker manifest push --purge nephatrine/drone-ci:2
           docker manifest push --purge nephatrine/drone-ci:latest
       - name: Checkout Repository

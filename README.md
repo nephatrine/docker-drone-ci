@@ -33,7 +33,7 @@ docker run --rm -p 8080:8080 -it nephatrine/drone-ci:latest /bin/bash
 
 ## Docker Tags
 
-- **nephatrine/drone-server:latest**: Drone v2.16.0 / Alpine Latest
+- **nephatrine/drone-server:latest**: Drone v2.17.0 / Alpine Latest
 
 ## Configuration Variables
 
