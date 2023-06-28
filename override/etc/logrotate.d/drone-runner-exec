@@ -1,4 +1,0 @@
-/mnt/config/log/drone-exec-runner.log {
-	missingok
-	notifempty
-}
