@@ -1,8 +1,7 @@
 FROM nephatrine/nxbuilder:golang AS builder
 
-ARG DRONE_VERSION=v2.17.0
+ARG DRONE_VERSION=v2.20.0
 ARG DRONE_CLI_VERSION=v1.7.0
-ARG DRONE_EXEC_VERSION=v1.0.0-beta.10
 
 RUN git -C /root clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/harness/drone
 RUN git -C /root clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/harness/drone-cli
