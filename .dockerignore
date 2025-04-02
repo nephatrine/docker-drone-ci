@@ -1,6 +1,11 @@
+# SPDX-FileCopyrightText: 2019 - 2025 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
+
 .git
 .gitea
-.gitignore
+.reuse
+LICENSES
 LICENSE.md
 README.md
 docker-compose.yml
