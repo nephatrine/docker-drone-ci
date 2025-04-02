@@ -1,11 +1,23 @@
+<!--
+SPDX-FileCopyrightText: 2019 - 2025 Daniel Wolf <nephatrine@gmail.com>
+
+SPDX-License-Identifier: ISC
+-->
+
 [Git](https://code.nephatrine.net/NephNET/docker-drone-ci/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/drone-ci/) |
 [unRAID](https://code.nephatrine.net/NephNET/unraid-containers)
 
 # Drone CI/CD Server
 
+## WARNING: I do not actively use this software anymore and so it is not thoroughly tested. I do suggest you find an alternative.
+
 This docker image contains a Drone server to self-host your own continuous
 delivery platform.
+
+The `latest` tag points to version `2.20.0` and this is the only image actively
+being updated. There are tags for older versions, but these may no longer be
+using the latest Alpine version and packages.
 
 **PLEASE READ AND UNDERSTAND THE [DRONE LICENSE](https://drone.io/enterprise/license/).
 THIS IMAGE CONTAINS THE ENTERPRISE VERSION IS COMPILED WITH THE ``nolimit`` TAG
@@ -17,23 +29,14 @@ INSTEAD OR PURCHASE A LICENSE.**
 To secure this service, we suggest a separate reverse proxy server, such as an
 [NGINX](https://nginx.com/) container.
 
-- [Alpine Linux](https://alpinelinux.org/) w/ [S6 Overlay](https://github.com/just-containers/s6-overlay)
-- [Drone](https://drone.io/) w/ [SQLite](https://www.sqlite.org/)
-
-This container only includes a server and exec runner. This is not a
-single-server configuration so you can easily add more agents and runners in
-separate containers as needed. You can pass variable ``DRONE_EXEC_DISABLED``
-to disable the included runner.
+This container only includes a server. This is not a single-server
+configuration so you can easily add runners in separate containers as needed.
 
 You can spin up a quick temporary test container like this:
 
 ~~~
 docker run --rm -p 8080:8080 -it nephatrine/drone-ci:latest /bin/bash
 ~~~
-
-## Docker Tags
-
-- **nephatrine/drone-server:latest**: Drone v2.20.0 / Alpine Latest
 
 ## Configuration Variables
 
