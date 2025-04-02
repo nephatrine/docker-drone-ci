@@ -4,8 +4,8 @@
 
 FROM code.nephatrine.net/nephnet/nxb-alpine:golang AS builder
 
-ARG DRONE_VERSION=v2.20.0
-ARG DRONE_CLI_VERSION=v1.7.0
+ARG DRONE_VERSION=v2.26.0
+ARG DRONE_CLI_VERSION=v1.8.0
 
 RUN git -C /root clone -b "$DRONE_VERSION" --single-branch --depth=1 https://github.com/harness/harness
 RUN git -C /root clone -b "$DRONE_CLI_VERSION" --single-branch --depth=1 https://github.com/harness/drone-cli

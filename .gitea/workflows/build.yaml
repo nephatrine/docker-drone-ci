@@ -9,7 +9,7 @@ on:
     branches:
       - 'master'
   schedule:
-    - cron:  '20 18 * * 3'
+    - cron:  '25 18 * * 4'
 jobs:
   build_amd64:
     if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
@@ -55,7 +55,7 @@ jobs:
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure() || gitea.event_name != 'schedule'
         with:
-          title: "Container Build (X86_64; 2.20.0)"
+          title: "Container Build (X86_64; 2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_amd64:
     needs: [build_amd64]
@@ -132,7 +132,7 @@ jobs:
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure() || gitea.event_name != 'schedule'
         with:
-          title: "Container Build (I686; 2.20.0)"
+          title: "Container Build (I686; 2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_i386:
     needs: [build_i386]
@@ -208,7 +208,7 @@ jobs:
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (AARCH64; 2.20.0)"
+          title: "Container Build (AARCH64; 2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_arm64:
     needs: [build_arm64]
@@ -284,7 +284,7 @@ jobs:
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (ARMV7L; 2.20.0)"
+          title: "Container Build (ARMV7L; 2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_armhf:
     needs: [build_armhf]
@@ -345,7 +345,7 @@ jobs:
         id: manifest
         run: |
           export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-ci --amend code.nephatrine.net/nephhub/ia32:drone-ci --amend code.nephatrine.net/nephhub/arm64:drone-ci --amend code.nephatrine.net/nephhub/arm32:drone-ci"
-          for manifestName in 2.20.0 2.20 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
+          for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
         run: sleep 60
@@ -353,13 +353,13 @@ jobs:
         if: steps.manifest.outcome != 'success'
         run: |
           export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-ci --amend code.nephatrine.net/nephhub/ia32:drone-ci --amend code.nephatrine.net/nephhub/arm64:drone-ci --amend code.nephatrine.net/nephhub/arm32:drone-ci"
-          for manifestName in 2.20.0 2.20 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
+          for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Notify Discord
         continue-on-error: true
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure() || gitea.event_name != 'schedule'
         with:
-          title: "Container Publish (2.20.0)"
+          title: "Container Publish (2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   push:
     needs: [push_amd64, push_i386, push_arm64, push_armhf]
@@ -387,7 +387,7 @@ jobs:
         id: manifest
         run: |
           export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
-          for manifestName in 2.20.0 2.20 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
+          for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
         run: sleep 60
@@ -395,12 +395,12 @@ jobs:
         if: steps.manifest.outcome != 'success'
         run: |
           export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
-          for manifestName in 2.20.0 2.20 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
+          for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure()
         with:
-          title: "DockerHub Publish (2.20.0)"
+          title: "DockerHub Publish (2.26.0)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   update_readme:
     needs: [push]

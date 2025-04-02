@@ -15,7 +15,7 @@ SPDX-License-Identifier: ISC
 This docker image contains a Drone server to self-host your own continuous
 delivery platform.
 
-The `latest` tag points to version `2.20.0` and this is the only image actively
+The `latest` tag points to version `2.26.0` and this is the only image actively
 being updated. There are tags for older versions, but these may no longer be
 using the latest Alpine version and packages.
 
