@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: ISC
 
-FROM code.nephatrine.net/nephnet/nxb-alpine:golang AS builder
+FROM code.nephatrine.net/nephnet/nxb-golang:latest AS builder
 
 ARG DRONE_VERSION=v2.26.0
 ARG DRONE_CLI_VERSION=v1.8.0
