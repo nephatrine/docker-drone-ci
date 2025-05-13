@@ -1,0 +1,22 @@
+version = 1
+SPDX-PackageName = "docker-drone-ci"
+SPDX-PackageSupplier = "Daniel Wolf <nephatrine@gmail.com>"
+SPDX-PackageDownloadLocation = "https://code.nephatrine.net/NephNET/docker-drone-ci"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/drone-server/dependencies.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/drone-server/type"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "override/etc/s6-overlay/s6-rc.d/user/contents.d/*"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
