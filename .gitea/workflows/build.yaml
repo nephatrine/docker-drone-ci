@@ -8,11 +8,26 @@ on:
     branches:
       - "master"
   schedule:
-    - cron: "25 18 * * 4"
+    - cron: "TZ=America/New_York 25 18 * * 4"
 jobs:
-  build_amd64:
-    if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
-    runs-on: nephnet-amd64
+  build_images:
+    if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs') || startsWith(gitea.event.head_commit.message, 'style')) || gitea.event_name == 'schedule')
+    strategy:
+      matrix:
+        include:
+          - runner: amd64
+            platform: amd64
+            nephhub: amd64
+          - runner: arm64
+            platform: arm64/v8
+            nephhub: arm64
+          - runner: armhf
+            platform: arm/v7
+            nephhub: arm32
+          - runner: i386
+            platform: 386
+            nephhub: ia32
+    runs-on: nephnet-${{matrix.runner}}
     continue-on-error: true
     steps:
       - name: Checkout Repository
@@ -41,23 +56,37 @@ jobs:
         uses: https://code.nephatrine.net/NephHub/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/${{matrix.platform}}
           provenance: false
           pull: true
           push: true
           file: Dockerfile
-          tags: code.nephatrine.net/nephhub/amd64:drone-ci
-          cache-from: type=registry,ref=code.nephatrine.net/nephhub/amd64-cache:drone-ci
-          cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/amd64-cache:drone-ci,mode=max
+          tags: code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}}
+          cache-from: type=registry,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:drone-ci
+          cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:drone-ci,mode=max
       - name: Notify Discord
-        continue-on-error: true
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
-        if: failure() || gitea.event_name != 'schedule'
+        if: failure()
         with:
-          title: "Container Build (X86_64; 2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  push_amd64:
-    needs: [build_amd64]
+          title: "FAIL: build_images (${{matrix.platform}})"
+          webhook: ${{ secrets.DISCORD_WH_CONTAINERS }}
+  push_images:
+    needs: [build_images]
+    strategy:
+      matrix:
+        include:
+          - platform: amd64
+            nephhub: amd64
+            dockerhub: amd64
+          - platform: arm64/v8
+            nephhub: arm64
+            dockerhub: arm64
+          - platform: arm/v7
+            nephhub: arm32
+            dockerhub: armv7
+          - platform: 386
+            nephhub: ia32
+            dockerhub: ia32
     runs-on: nephnet-fast
     continue-on-error: true
     steps:
@@ -79,245 +108,22 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Tag & Push
         run: |
-          docker pull code.nephatrine.net/nephhub/amd64:drone-ci --platform linux/amd64
-          docker tag code.nephatrine.net/nephhub/amd64:drone-ci nephatrine/amd64:drone-ci
-          docker rmi code.nephatrine.net/nephhub/amd64:drone-ci
-          docker push nephatrine/amd64:drone-ci
-          docker rmi nephatrine/amd64:drone-ci
+          docker pull code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}} --platform linux/${{matrix.platform}}
+          docker tag code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}} nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
+          docker rmi code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}}
+          docker push nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
+          docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
       - name: Clean Up
         if: failure()
-        run: docker rmi nephatrine/amd64:drone-ci
-  build_i386:
-    if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
-    runs-on: nephnet-i386
-    continue-on-error: true
-    steps:
-      - name: Checkout Repository
-        uses: https://code.nephatrine.net/NephHub/checkout@v4
-      - name: BuildX Setup
-        uses: https://code.nephatrine.net/NephHub/setup-buildx-action@v3
-      - name: NephCode Login (Push)
-        continue-on-error: true
-        id: nclogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Wait to Retry
-        if: steps.nclogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry NephCode Login (Push)
-        if: steps.nclogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Build & Push
-        uses: https://code.nephatrine.net/NephHub/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/386
-          provenance: false
-          pull: true
-          push: true
-          file: Dockerfile
-          tags: code.nephatrine.net/nephhub/ia32:drone-ci
-          cache-from: type=registry,ref=code.nephatrine.net/nephhub/ia32-cache:drone-ci
-          cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/ia32-cache:drone-ci,mode=max
+        run: docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
       - name: Notify Discord
-        continue-on-error: true
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
-        if: failure() || gitea.event_name != 'schedule'
-        with:
-          title: "Container Build (I686; 2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  push_i386:
-    needs: [build_i386]
-    runs-on: nephnet-fast
-    continue-on-error: true
-    steps:
-      - name: DockerHub Login (Push)
-        continue-on-error: true
-        id: dhlogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Wait to Retry
-        if: steps.dhlogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry DockerHub Login (Push)
-        if: steps.dhlogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Tag & Push
-        run: |
-          docker pull code.nephatrine.net/nephhub/ia32:drone-ci --platform linux/386
-          docker tag code.nephatrine.net/nephhub/ia32:drone-ci nephatrine/ia32:drone-ci
-          docker rmi code.nephatrine.net/nephhub/ia32:drone-ci
-          docker push nephatrine/ia32:drone-ci
-          docker rmi nephatrine/ia32:drone-ci
-      - name: Clean Up
-        if: failure()
-        run: docker rmi nephatrine/ia32:drone-ci
-  build_arm64:
-    if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
-    runs-on: nephnet-arm64
-    continue-on-error: true
-    steps:
-      - name: Checkout Repository
-        uses: https://code.nephatrine.net/NephHub/checkout@v4
-      - name: BuildX Setup
-        uses: https://code.nephatrine.net/NephHub/setup-buildx-action@v3
-      - name: NephCode Login (Push)
-        continue-on-error: true
-        id: nclogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Wait to Retry
-        if: steps.nclogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry NephCode Login (Push)
-        if: steps.nclogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Build & Push
-        uses: https://code.nephatrine.net/NephHub/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm64/v8
-          provenance: false
-          pull: true
-          push: true
-          file: Dockerfile
-          tags: code.nephatrine.net/nephhub/arm64:drone-ci
-          cache-from: type=registry,ref=code.nephatrine.net/nephhub/arm64-cache:drone-ci
-          cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/arm64-cache:drone-ci,mode=max
-      - name: Notify Discord
-        uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (AARCH64; 2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  push_arm64:
-    needs: [build_arm64]
-    runs-on: nephnet-fast
-    continue-on-error: true
-    steps:
-      - name: DockerHub Login (Push)
-        continue-on-error: true
-        id: dhlogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Wait to Retry
-        if: steps.dhlogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry DockerHub Login (Push)
-        if: steps.dhlogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Tag & Push
-        run: |
-          docker pull code.nephatrine.net/nephhub/arm64:drone-ci --platform linux/arm64/v8
-          docker tag code.nephatrine.net/nephhub/arm64:drone-ci nephatrine/arm64:drone-ci
-          docker rmi code.nephatrine.net/nephhub/arm64:drone-ci
-          docker push nephatrine/arm64:drone-ci
-          docker rmi nephatrine/arm64:drone-ci
-      - name: Clean Up
-        if: failure()
-        run: docker rmi nephatrine/arm64:drone-ci
-  build_armhf:
-    if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
-    runs-on: nephnet-arm64_32
-    continue-on-error: true
-    steps:
-      - name: Checkout Repository
-        uses: https://code.nephatrine.net/NephHub/checkout@v4
-      - name: BuildX Setup
-        uses: https://code.nephatrine.net/NephHub/setup-buildx-action@v3
-      - name: NephCode Login (Push)
-        continue-on-error: true
-        id: nclogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Wait to Retry
-        if: steps.nclogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry NephCode Login (Push)
-        if: steps.nclogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          registry: code.nephatrine.net
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.PACKAGER_TOKEN }}
-      - name: Build & Push
-        uses: https://code.nephatrine.net/NephHub/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm/v7
-          provenance: false
-          pull: true
-          push: true
-          file: Dockerfile
-          tags: code.nephatrine.net/nephhub/arm32:drone-ci
-          cache-from: type=registry,ref=code.nephatrine.net/nephhub/arm32-cache:drone-ci
-          cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/arm32-cache:drone-ci,mode=max
-      - name: Notify Discord
-        uses: https://github.com/sarisia/actions-status-discord@v1
-        if: failure()
-        with:
-          title: "Container Build (ARMV7L; 2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
-  push_armhf:
-    needs: [build_armhf]
-    runs-on: nephnet-fast
-    continue-on-error: true
-    steps:
-      - name: DockerHub Login (Push)
-        continue-on-error: true
-        id: dhlogin
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Wait to Retry
-        if: steps.dhlogin.outcome != 'success'
-        run: sleep 60
-      - name: Retry DockerHub Login (Push)
-        if: steps.dhlogin.outcome != 'success'
-        uses: https://code.nephatrine.net/NephHub/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Tag & Push
-        run: |
-          docker pull code.nephatrine.net/nephhub/arm32:drone-ci --platform linux/arm/v7
-          docker tag code.nephatrine.net/nephhub/arm32:drone-ci nephatrine/armv7:drone-ci
-          docker rmi code.nephatrine.net/nephhub/arm32:drone-ci
-          docker push nephatrine/armv7:drone-ci
-          docker rmi nephatrine/armv7:drone-ci
-      - name: Clean Up
-        if: failure()
-        run: docker rmi nephatrine/armv7:drone-ci
-  build:
-    needs: [build_amd64, build_i386, build_arm64, build_armhf]
+          title: "FAIL: push_images (${{matrix.platform}})"
+          webhook: ${{ secrets.DISCORD_WH_CONTAINERS }}
+  build_manifest:
+    needs: [build_images]
     runs-on: nephnet-fast
     continue-on-error: true
     steps:
@@ -343,7 +149,7 @@ jobs:
         continue-on-error: true
         id: manifest
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-ci --amend code.nephatrine.net/nephhub/ia32:drone-ci --amend code.nephatrine.net/nephhub/arm64:drone-ci --amend code.nephatrine.net/nephhub/arm32:drone-ci"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:2.26.0-amd64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-ia32 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm32"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
@@ -351,17 +157,16 @@ jobs:
       - name: Retry Docker Manifest
         if: steps.manifest.outcome != 'success'
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-ci --amend code.nephatrine.net/nephhub/ia32:drone-ci --amend code.nephatrine.net/nephhub/arm64:drone-ci --amend code.nephatrine.net/nephhub/arm32:drone-ci"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:2.26.0-amd64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-ia32 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm32"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Notify Discord
-        continue-on-error: true
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
-        if: failure() || gitea.event_name != 'schedule'
+        if: failure()
         with:
-          title: "Container Publish (2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
-  push:
-    needs: [push_amd64, push_i386, push_arm64, push_armhf]
+          title: "FAIL: build_manifest"
+          webhook: ${{ secrets.DISCORD_WH_CONTAINERS }}
+  push_manifest:
+    needs: [push_images]
     runs-on: nephnet-fast
     continue-on-error: true
     steps:
@@ -385,7 +190,7 @@ jobs:
         continue-on-error: true
         id: manifest
         run: |
-          export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
+          export IMAGELIST="--amend nephatrine/amd64:drone-ci-2.26.0 --amend nephatrine/ia32:drone-ci-2.26.0 --amend nephatrine/arm64:drone-ci-2.26.0 --amend nephatrine/armv7:drone-ci-2.26.0"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
@@ -393,16 +198,16 @@ jobs:
       - name: Retry Docker Manifest
         if: steps.manifest.outcome != 'success'
         run: |
-          export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
+          export IMAGELIST="--amend nephatrine/amd64:drone-ci-2.26.0 --amend nephatrine/ia32:drone-ci-2.26.0 --amend nephatrine/arm64:drone-ci-2.26.0 --amend nephatrine/armv7:drone-ci-2.26.0"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure()
         with:
-          title: "DockerHub Publish (2.26.0)"
-          webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
+          title: "FAIL: push_manifest"
+          webhook: ${{ secrets.DISCORD_WH_CONTAINERS }}
   update_readme:
-    needs: [push]
+    needs: [push_manifest]
     runs-on: nephnet-fast
     continue-on-error: true
     steps:
