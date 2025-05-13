@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2019-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+  drone-ci:
+    build: .
+    container_name: drone-ci
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      DRONE_SERVER_HOST: drone.example.net
+      DRONE_SERVER_PROTO: https
+      DRONE_GITEA_SERVER: https://gitea.example.net"
+      DRONE_GITEA_CLIENT_ID:
+      DRONE_GITEA_CLIENT_SECRET:
+    ports:
+      - "8080:8080/tcp"
+    volumes:
+      - /mnt/containers/drone-ci:/mnt/config

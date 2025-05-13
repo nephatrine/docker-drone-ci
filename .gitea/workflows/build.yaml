@@ -1,5 +1,4 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Daniel Wolf <nephatrine@gmail.com>
-#
+# SPDX-FileCopyrightText: 2019-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
 name: Build Container Image
@@ -7,9 +6,9 @@ run-name: ${{ gitea.actor }} pushed to ${{ gitea.repository }}:${{ gitea.ref_nam
 on:
   push:
     branches:
-      - 'master'
+      - "master"
   schedule:
-    - cron:  '25 18 * * 4'
+    - cron: "25 18 * * 4"
 jobs:
   build_amd64:
     if: gitea.repository_owner == 'NephNET' && (!(startsWith(gitea.event.head_commit.message, 'chore') || startsWith(gitea.event.head_commit.message, 'docs')) || gitea.event_name == 'schedule')
