@@ -40,6 +40,7 @@ not maintain this indefinitely.**
 - [Skarnet S6](https://skarnet.org/software/s6/)
 - [s6-overlay](https://github.com/just-containers/s6-overlay)
 - [Drone](https://www.drone.io/)
+- [SQLite](https://sqlite.org/)
 
 ## Configuration
 
