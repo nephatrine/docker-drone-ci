@@ -61,7 +61,7 @@ jobs:
           pull: true
           push: true
           file: Dockerfile
-          tags: code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}}
+          tags: code.nephatrine.net/nephnet/drone-ci:latest-${{matrix.nephhub}}
           cache-from: type=registry,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:drone-ci
           cache-to: type=registry,image-manifest=true,oci-mediatypes=true,ref=code.nephatrine.net/nephhub/${{matrix.nephhub}}-cache:drone-ci,mode=max
       - name: Notify Discord
@@ -108,14 +108,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
       - name: Tag & Push
         run: |
-          docker pull code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}} --platform linux/${{matrix.platform}}
-          docker tag code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}} nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
-          docker rmi code.nephatrine.net/nephnet/drone-ci:2.26.0-${{matrix.nephhub}}
-          docker push nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
-          docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
+          docker pull code.nephatrine.net/nephnet/drone-ci:latest-${{matrix.nephhub}} --platform linux/${{matrix.platform}}
+          docker tag code.nephatrine.net/nephnet/drone-ci:latest-${{matrix.nephhub}} nephatrine/${{matrix.dockerhub}}:drone-ci
+          docker rmi code.nephatrine.net/nephnet/drone-ci:latest-${{matrix.nephhub}}
+          docker push nephatrine/${{matrix.dockerhub}}:drone-ci
+          docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci
       - name: Clean Up
         if: failure()
-        run: docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci-2.26.0
+        run: docker rmi nephatrine/${{matrix.dockerhub}}:drone-ci
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure()
@@ -149,7 +149,7 @@ jobs:
         continue-on-error: true
         id: manifest
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:2.26.0-amd64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-ia32 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm32"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:latest-amd64 --amend code.nephatrine.net/nephnet/drone-ci:latest-ia32 --amend code.nephatrine.net/nephnet/drone-ci:latest-arm64 --amend code.nephatrine.net/nephnet/drone-ci:latest-arm32"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
@@ -157,7 +157,7 @@ jobs:
       - name: Retry Docker Manifest
         if: steps.manifest.outcome != 'success'
         run: |
-          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:2.26.0-amd64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-ia32 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm64 --amend code.nephatrine.net/nephnet/drone-ci:2.26.0-arm32"
+          export IMAGELIST="--amend code.nephatrine.net/nephnet/drone-ci:latest-amd64 --amend code.nephatrine.net/nephnet/drone-ci:latest-ia32 --amend code.nephatrine.net/nephnet/drone-ci:latest-arm64 --amend code.nephatrine.net/nephnet/drone-ci:latest-arm32"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-ci:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-ci:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
@@ -190,7 +190,7 @@ jobs:
         continue-on-error: true
         id: manifest
         run: |
-          export IMAGELIST="--amend nephatrine/amd64:drone-ci-2.26.0 --amend nephatrine/ia32:drone-ci-2.26.0 --amend nephatrine/arm64:drone-ci-2.26.0 --amend nephatrine/armv7:drone-ci-2.26.0"
+          export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
@@ -198,7 +198,7 @@ jobs:
       - name: Retry Docker Manifest
         if: steps.manifest.outcome != 'success'
         run: |
-          export IMAGELIST="--amend nephatrine/amd64:drone-ci-2.26.0 --amend nephatrine/ia32:drone-ci-2.26.0 --amend nephatrine/arm64:drone-ci-2.26.0 --amend nephatrine/armv7:drone-ci-2.26.0"
+          export IMAGELIST="--amend nephatrine/amd64:drone-ci --amend nephatrine/ia32:drone-ci --amend nephatrine/arm64:drone-ci --amend nephatrine/armv7:drone-ci"
           for manifestName in 2.26.0 2.26 2 latest; do docker manifest rm nephatrine/drone-ci:${manifestName} || true; docker manifest create nephatrine/drone-ci:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-ci:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
