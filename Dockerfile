@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2019-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
 
-# hadolint global ignore=DL3007,DL3018
+# hadolint global ignore=DL3018
 
+# hadolint ignore=DL3007
 FROM code.nephatrine.net/nephnet/nxb-golang:latest AS builder
 
 ARG DRONE_VERSION=v2.26.0
@@ -14,6 +15,7 @@ RUN go install -tags nolimit ./cmd/drone-server
 WORKDIR /root/drone-cli
 RUN go install ./...
 
+# hadolint ignore=DL3007
 FROM code.nephatrine.net/nephnet/alpine-s6:latest
 LABEL maintainer="Daniel Wolf <nephatrine@gmail.com>"
 
